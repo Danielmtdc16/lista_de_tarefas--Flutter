@@ -148,7 +148,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
             ),
             duration: const Duration(seconds: 4),
           );
-
+          ScaffoldMessenger.of(context).removeCurrentSnackBar();
           ScaffoldMessenger.of(context).showSnackBar(snack);
 
         });
