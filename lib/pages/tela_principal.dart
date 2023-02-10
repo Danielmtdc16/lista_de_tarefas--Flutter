@@ -12,7 +12,7 @@ class TelaPrincipal extends StatefulWidget {
 }
 
 class _TelaPrincipalState extends State<TelaPrincipal> {
-  final List _toDoList = [];
+  List _toDoList = [];
 
   final _addController = TextEditingController();
 
@@ -23,6 +23,19 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
       _addController.text = '';
       newTodo["ok"] = false;
       _toDoList.add(newTodo);
+      _saveData();
+    });
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    _readData().then((value){
+      setState(() {
+        _toDoList = json.decode(value!);
+      });
     });
   }
 
@@ -64,6 +77,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
                     onChanged: (e){
                       setState(() {
                         _toDoList[index]["ok"] = e;
+                        _saveData();
                       });
                     },
                     secondary: CircleAvatar(
