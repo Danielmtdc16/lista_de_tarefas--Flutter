@@ -27,12 +27,11 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
     });
   }
 
-
   @override
   void initState() {
     super.initState();
 
-    _readData().then((value){
+    _readData().then((value) {
       setState(() {
         _toDoList = json.decode(value!);
       });
@@ -66,28 +65,43 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
                 )
               ],
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Expanded(
               child: ListView.builder(
                 itemCount: _toDoList.length,
-                itemBuilder: (context, index){
-                  return CheckboxListTile(
-                    title: Text(_toDoList[index]["title"]),
-                    value: _toDoList[index]["ok"],
-                    onChanged: (e){
-                      setState(() {
-                        _toDoList[index]["ok"] = e;
-                        _saveData();
-                      });
-                    },
-                    secondary: CircleAvatar(
-                      child: Icon(_toDoList[index]["ok"] ? Icons.check : Icons.error),
-                    ),
-                  );
-                }
+                itemBuilder: itemBuilder,
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget itemBuilder(context, index) {
+    return Dismissible(
+      key: Key(DateTime.now().microsecondsSinceEpoch.toString()),
+      background: Container(
+        color: Colors.red,
+        child: const Align(
+          alignment: Alignment(-0.9, 0.0),
+          child: Icon(Icons.delete, color: Colors.white,),
+        ),
+      ),
+      direction: DismissDirection.startToEnd,
+      child: CheckboxListTile(
+        title: Text(_toDoList[index]["title"]),
+        value: _toDoList[index]["ok"],
+        onChanged: (e) {
+          setState(() {
+            _toDoList[index]["ok"] = e;
+            _saveData();
+          });
+        },
+        secondary: CircleAvatar(
+          child: Icon(_toDoList[index]["ok"] ? Icons.check : Icons.error),
         ),
       ),
     );
