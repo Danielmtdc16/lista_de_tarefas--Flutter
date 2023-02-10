@@ -14,6 +14,9 @@ class TelaPrincipal extends StatefulWidget {
 class _TelaPrincipalState extends State<TelaPrincipal> {
   List _toDoList = [];
 
+  Map<String, dynamic> tarefaRemovida = Map();
+  int? posTarefaRemovida;
+
   final _addController = TextEditingController();
 
   void _addToDo() {
@@ -87,7 +90,10 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
         color: Colors.red,
         child: const Align(
           alignment: Alignment(-0.9, 0.0),
-          child: Icon(Icons.delete, color: Colors.white,),
+          child: Icon(
+            Icons.delete,
+            color: Colors.white,
+          ),
         ),
       ),
       direction: DismissDirection.startToEnd,
@@ -104,6 +110,32 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
           child: Icon(_toDoList[index]["ok"] ? Icons.check : Icons.error),
         ),
       ),
+      onDismissed: (direction) {
+        tarefaRemovida = _toDoList[index];
+        posTarefaRemovida = index;
+
+        setState(() {
+          _toDoList.removeAt(index);
+          _saveData();
+
+          final snack = SnackBar(
+            content: Text("Tarefa \"${tarefaRemovida["title"]}\" Removida!"),
+            action: SnackBarAction(
+              label: "Desfazer",
+              onPressed: () {
+                setState(() {
+                  _toDoList.insert(posTarefaRemovida!, tarefaRemovida);
+                  _saveData();
+                });
+              },
+            ),
+            duration: const Duration(seconds: 4),
+          );
+
+          ScaffoldMessenger.of(context).showSnackBar(snack);
+
+        });
+      },
     );
   }
 
