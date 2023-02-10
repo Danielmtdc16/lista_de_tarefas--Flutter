@@ -117,6 +117,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
       child: CheckboxListTile(
         title: Text(_toDoList[index]["title"]),
         value: _toDoList[index]["ok"],
+        contentPadding: const EdgeInsets.symmetric(horizontal: 0),
         onChanged: (e) {
           setState(() {
             _toDoList[index]["ok"] = e;
