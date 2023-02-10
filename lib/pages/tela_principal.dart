@@ -20,15 +20,17 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
   final _addController = TextEditingController();
 
   void _addToDo() {
-    setState(() {
-      Map<String, dynamic> newTodo = Map();
-      newTodo["title"] = _addController.text;
-      _addController.text = '';
-      newTodo["ok"] = false;
-      _toDoList.add(newTodo);
-      _saveData();
-      _refresh();
-    });
+    if (_addController.text != '') {
+      setState(() {
+        Map<String, dynamic> newTodo = Map();
+        newTodo["title"] = _addController.text;
+        _addController.text = '';
+        newTodo["ok"] = false;
+        _toDoList.add(newTodo);
+        _saveData();
+        _refresh();
+      });
+    }
   }
 
   @override
