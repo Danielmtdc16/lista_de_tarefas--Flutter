@@ -27,6 +27,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
       newTodo["ok"] = false;
       _toDoList.add(newTodo);
       _saveData();
+      _refresh();
     });
   }
 
@@ -39,6 +40,19 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
         _toDoList = json.decode(value!);
       });
     });
+  }
+
+  Future _refresh () async {
+    await Future.delayed(const Duration(seconds: 1));
+
+    setState(() {
+      _toDoList.sort((a, b) {
+        if (a["ok"] && !b["ok"]){ return 1;}
+        else if (!a["ok"] && b["ok"]){ return -1;}
+        else {return 0;}
+      });
+    });
+    _saveData();
   }
 
   @override
@@ -72,9 +86,12 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
               height: 10,
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: _toDoList.length,
-                itemBuilder: itemBuilder,
+              child: RefreshIndicator(
+                onRefresh: _refresh,
+                child: ListView.builder(
+                  itemCount: _toDoList.length,
+                  itemBuilder: itemBuilder,
+                ),
               ),
             ),
           ],
