@@ -12,8 +12,19 @@ class TelaPrincipal extends StatefulWidget {
 }
 
 class _TelaPrincipalState extends State<TelaPrincipal> {
+  final List _toDoList = [];
 
-  List _toDoList = [];
+  final _addController = TextEditingController();
+
+  void _addToDo() {
+    setState(() {
+      Map<String, dynamic> newTodo = Map();
+      newTodo["title"] = _addController.text;
+      _addController.text = '';
+      newTodo["ok"] = false;
+      _toDoList.add(newTodo);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +33,49 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
         title: const Text("Lista de Tarefas"),
         centerTitle: true,
       ),
-      body: Container(),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _addController,
+                    decoration: const InputDecoration(
+                      hintText: "Escreva",
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: _addToDo,
+                  child: const Text("Add"),
+                )
+              ],
+            ),
+            const SizedBox(height: 10,),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _toDoList.length,
+                itemBuilder: (context, index){
+                  return CheckboxListTile(
+                    title: Text(_toDoList[index]["title"]),
+                    value: _toDoList[index]["ok"],
+                    onChanged: (e){
+                      setState(() {
+                        _toDoList[index]["ok"] = e;
+                      });
+                    },
+                    secondary: CircleAvatar(
+                      child: Icon(_toDoList[index]["ok"] ? Icons.check : Icons.error),
+                    ),
+                  );
+                }
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -31,14 +84,13 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
     return File('${directory.path}/data.json');
   }
 
-  Future<File> _saveData() async{
+  Future<File> _saveData() async {
     String data = json.encode(_toDoList);
     final file = await _getFile();
     return file.writeAsString(data);
   }
 
   Future<String?> _readData() async {
-
     try {
       final file = await _getFile();
 
@@ -46,7 +98,5 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
     } catch (e) {
       return null;
     }
-
   }
-
 }
